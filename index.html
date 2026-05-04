@@ -1,32 +1,15 @@
-async function checkSafety() {
-  const destination = document.getElementById("destination").value;
+const raw = await res.json();
 
-  document.getElementById("result").innerText = "Checking risk...";
+console.log("RAW:", raw);
 
-  try {
-    const res = await fetch("https://jayna-nonnegotiable-noncorroboratively.ngrok-free.dev/webhook/2ed73ed6-7a9b-4541-838a-c0f59a72d7db", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ destination })
-    });
+// 🔥 Normalize ALL n8n formats
+const data =
+  raw?.[0]?.json ||   // array format
+  raw?.json ||        // wrapped format
+  raw;                // clean format
 
-    const data = await res.json();
-
-    console.log("FULL RESPONSE:", data); // 👈 IMPORTANT DEBUG
-
-    const result = Array.isArray(data) ? data[0] : data;
-
-    document.getElementById("result").innerText =
-      "📍 Destination: " + (result.Destination || "N/A") +
-      "\n🔴 Risk Level: " + (result.Risk_level || "N/A") +
-      "\n📊 Score: " + (result.Score ?? "N/A") +
-      "\n⚠️ Advice: " + (result.Travel_Advice || "N/A");
-
-  } catch (error) {
-    console.log(error);
-    document.getElementById("result").innerText =
-      "❌ Error connecting to server";
-  }
-}
+document.getElementById("result").innerText =
+  "📍 Destination: " + (data.Destination || "N/A") +
+  "\n🔴 Risk Level: " + (data.Risk_level || "N/A") +
+  "\n📊 Score: " + (data.Score ?? "N/A") +
+  "\n⚠️ Advice: " + (data.Travel_Advice || "N/A");
