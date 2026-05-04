@@ -1,15 +1,32 @@
+const res = await fetch("https://jayna-nonnegotiable-noncorroboratively.ngrok-free.dev/webhook/2ed73ed6-7a9b-4541-838a-c0f59a72d7db", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ destination })
+});
+
 const raw = await res.json();
 
 console.log("FULL RESPONSE:", raw);
 
-// 🔥 normalize ALL n8n formats
+// 🔥 SAFE NORMALIZER (like your Gemini extractor)
 const data =
   raw?.[0]?.json ||
   raw?.json ||
-  raw;
+  raw?.message ||
+  raw ||
+  {};
+
+// safety check
+if (!data || Object.keys(data).length === 0) {
+  document.getElementById("result").innerText =
+    "❌ No data returned from server";
+  return;
+}
 
 document.getElementById("result").innerText =
-  "📍 Destination: " + (data.Destination || "N/A") +
-  "\n🔴 Risk Level: " + (data.Risk_level || "N/A") +
+  "📍 Destination: " + (data.Destination ?? "N/A") +
+  "\n🔴 Risk Level: " + (data.Risk_level ?? "N/A") +
   "\n📊 Score: " + (data.Score ?? "N/A") +
-  "\n⚠️ Advice: " + (data.Travel_Advice || "N/A");
+  "\n⚠️ Advice: " + (data.Travel_Advice ?? "N/A");
