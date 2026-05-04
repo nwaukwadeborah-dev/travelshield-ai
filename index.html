@@ -1,12 +1,12 @@
 const raw = await res.json();
 
-console.log("RAW:", raw);
+console.log("FULL RESPONSE:", raw);
 
-// 🔥 Normalize ALL n8n formats
+// 🔥 normalize ALL n8n formats
 const data =
-  raw?.[0]?.json ||   // array format
-  raw?.json ||        // wrapped format
-  raw;                // clean format
+  raw?.[0]?.json ||
+  raw?.json ||
+  raw;
 
 document.getElementById("result").innerText =
   "📍 Destination: " + (data.Destination || "N/A") +
