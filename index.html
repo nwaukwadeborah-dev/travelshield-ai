@@ -9,14 +9,26 @@
 
     <p>Enter a destination to check travel safety</p>
 
-    <input type="text" placeholder="e.g. London, USA" style="padding:10px; width:200px;">
+    <input id="location" type="text" placeholder="e.g. USA" style="padding:10px; width:200px;">
     <br><br>
 
-    <button style="padding:10px 20px;">Check Safety</button>
+    <button onclick="checkSafety()" style="padding:10px 20px;">
+        Check Safety
+    </button>
+
+    <p id="result" style="margin-top:30px; color:green;"></p>
 
     <p style="margin-top:30px; color:gray;">
         This is your first simple website version 🚀
     </p>
+
+    <script>
+        function checkSafety() {
+            let place = document.getElementById("location").value;
+            document.getElementById("result").innerText =
+                "Checking safety for " + place + "... (demo mode)";
+        }
+    </script>
 
 </body>
 </html>
