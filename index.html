@@ -1,24 +1,55 @@
-<script>
-async function checkSafety() {
-  const destination = document.getElementById("destination").value;
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TravelShield AI</title>
+</head>
 
-  document.getElementById("result").innerText = "Checking risk...";
+<body>
 
-  const res = await fetch("https://YOUR-NGROK-DOMAIN/webhook/2ed73ed6-7a9b-4541-838a-c0f59a72d7db", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      destination: destination
-    })
-  });
+  <h1>🌍 TravelShield AI</h1>
 
-  const data = await res.json();
+  <input id="destination" placeholder="Enter country (e.g. Nigeria)" />
 
-  document.getElementById("result").innerText =
-    "Risk Level: " + data.Risk_level +
-    "\nScore: " + data.Score +
-    "\nAdvice: " + data.Travel_Advice;
-}
-</script>
+  <button onclick="checkSafety()">Check Safety</button>
+
+  <pre id="result">Enter a destination above</pre>
+
+  <script>
+    async function checkSafety() {
+      const destination = document.getElementById("destination").value;
+
+      if (!destination) {
+        document.getElementById("result").innerText = "Please enter a country";
+        return;
+      }
+
+      document.getElementById("result").innerText = "Checking risk...";
+
+      try {
+        const res = await fetch("https://jayna-nonnegotiable-noncorroboratively.ngrok-free.dev/webhook/2ed73ed6-7a9b-4541-838a-c0f59a72d7db", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            destination: destination
+          })
+        });
+
+        const data = await res.json();
+
+        document.getElementById("result").innerText =
+          "📍 Destination: " + data.Destination +
+          "\n🔴 Risk Level: " + data.Risk_level +
+          "\n📊 Score: " + data.Score + "/10" +
+          "\n⚠️ Advice: " + data.Travel_Advice;
+
+      } catch (error) {
+        document.getElementById("result").innerText =
+          "❌ Error connecting to n8n. Check webhook or internet.";
+      }
+    }
+  </script>
+
+</body>
+</html>
