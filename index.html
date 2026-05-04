@@ -1,32 +1,45 @@
-const res = await fetch("https://jayna-nonnegotiable-noncorroboratively.ngrok-free.dev/webhook/2ed73ed6-7a9b-4541-838a-c0f59a72d7db", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({ destination })
-});
+async function checkSafety() {
+  const destination = document.getElementById("destination").value;
 
-const raw = await res.json();
+  if (!destination) {
+    document.getElementById("result").innerText = "Please enter a country";
+    return;
+  }
 
-console.log("FULL RESPONSE:", raw);
+  document.getElementById("result").innerText = "Checking risk...";
 
-// 🔥 SAFE NORMALIZER (like your Gemini extractor)
-const data =
-  raw?.[0]?.json ||
-  raw?.json ||
-  raw?.message ||
-  raw ||
-  {};
+  try {
+    const res = await fetch("https://jayna-nonnegotiable-noncorroboratively.ngrok-free.dev/webhook/2ed73ed6-7a9b-4541-838a-c0f59a72d7db", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ destination })
+    });
 
-// safety check
-if (!data || Object.keys(data).length === 0) {
-  document.getElementById("result").innerText =
-    "❌ No data returned from server";
-  return;
+    const raw = await res.json();
+
+    console.log("RAW RESPONSE:", raw);
+
+    // ✅ UNIVERSAL FIX (handles ALL n8n formats)
+    const data =
+      raw?.[0]?.json ||   // array format
+      raw?.json ||        // wrapped format
+      raw;                // direct format
+
+    const destinationOut = data?.Destination ?? "N/A";
+    const risk = data?.Risk_level ?? "N/A";
+    const score = data?.Score ?? "N/A";
+    const advice = data?.Travel_Advice ?? "No advice returned";
+
+    document.getElementById("result").innerHTML = `
+      📍 ${destinationOut}<br><br>
+      🔴 Risk Level: ${risk}<br>
+      📊 Score: ${score}/10<br><br>
+      ⚠️ ${advice}
+    `;
+
+  } catch (error) {
+    console.error(error);
+    document.getElementById("result").innerText =
+      "❌ Error connecting to server";
+  }
 }
-
-document.getElementById("result").innerText =
-  "📍 Destination: " + (data.Destination ?? "N/A") +
-  "\n🔴 Risk Level: " + (data.Risk_level ?? "N/A") +
-  "\n📊 Score: " + (data.Score ?? "N/A") +
-  "\n⚠️ Advice: " + (data.Travel_Advice ?? "N/A");
