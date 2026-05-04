@@ -1,55 +1,32 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>TravelShield AI</title>
-</head>
+async function checkSafety() {
+  const destination = document.getElementById("destination").value;
 
-<body>
+  document.getElementById("result").innerText = "Checking risk...";
 
-  <h1>🌍 TravelShield AI</h1>
+  try {
+    const res = await fetch("https://jayna-nonnegotiable-noncorroboratively.ngrok-free.dev/webhook/2ed73ed6-7a9b-4541-838a-c0f59a72d7db", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ destination })
+    });
 
-  <input id="destination" placeholder="Enter country (e.g. Nigeria)" />
+    const data = await res.json();
 
-  <button onclick="checkSafety()">Check Safety</button>
+    console.log("FULL RESPONSE:", data); // 👈 IMPORTANT DEBUG
 
-  <pre id="result">Enter a destination above</pre>
+    const result = Array.isArray(data) ? data[0] : data;
 
-  <script>
-    async function checkSafety() {
-      const destination = document.getElementById("destination").value;
+    document.getElementById("result").innerText =
+      "📍 Destination: " + (result.Destination || "N/A") +
+      "\n🔴 Risk Level: " + (result.Risk_level || "N/A") +
+      "\n📊 Score: " + (result.Score ?? "N/A") +
+      "\n⚠️ Advice: " + (result.Travel_Advice || "N/A");
 
-      if (!destination) {
-        document.getElementById("result").innerText = "Please enter a country";
-        return;
-      }
-
-      document.getElementById("result").innerText = "Checking risk...";
-
-      try {
-        const res = await fetch("https://jayna-nonnegotiable-noncorroboratively.ngrok-free.dev/webhook/2ed73ed6-7a9b-4541-838a-c0f59a72d7db", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            destination: destination
-          })
-        });
-
-        const data = await res.json();
-
-        document.getElementById("result").innerText =
-          "📍 Destination: " + data.Destination +
-          "\n🔴 Risk Level: " + data.Risk_level +
-          "\n📊 Score: " + data.Score + "/10" +
-          "\n⚠️ Advice: " + data.Travel_Advice;
-
-      } catch (error) {
-        document.getElementById("result").innerText =
-          "❌ Error connecting to n8n. Check webhook or internet.";
-      }
-    }
-  </script>
-
-</body>
-</html>
+  } catch (error) {
+    console.log(error);
+    document.getElementById("result").innerText =
+      "❌ Error connecting to server";
+  }
+}
