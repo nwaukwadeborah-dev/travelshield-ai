@@ -2,7 +2,9 @@
 async function checkSafety() {
   const destination = document.getElementById("destination").value;
 
-  const res = await fetch("https://YOUR-NGROK/webhook/2ed73ed6-7a9b-4541-838a-c0f59a72d7db", {
+  document.getElementById("result").innerText = "Checking risk...";
+
+  const res = await fetch("https://YOUR-NGROK-DOMAIN/webhook/2ed73ed6-7a9b-4541-838a-c0f59a72d7db", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -15,6 +17,8 @@ async function checkSafety() {
   const data = await res.json();
 
   document.getElementById("result").innerText =
-    JSON.stringify(data, null, 2);
+    "Risk Level: " + data.Risk_level +
+    "\nScore: " + data.Score +
+    "\nAdvice: " + data.Travel_Advice;
 }
 </script>
