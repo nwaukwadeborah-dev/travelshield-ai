@@ -1,61 +1,18 @@
-async function checkSafety() {
-  const destination = document.getElementById("destination").value;
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TravelShield AI</title>
+</head>
+<body>
 
-  if (!destination) {
-    document.getElementById("result").innerText =
-      "Please enter a country";
-    return;
-  }
+<h2>Travel Risk Checker</h2>
 
-  document.getElementById("result").innerText =
-    "Checking risk...";
+<input id="destination" placeholder="Enter country">
+<button onclick="checkSafety()">Check Risk</button>
 
-  try {
-    const res = await fetch(
-      "https://jayna-nonnegotiable-noncorroboratively.ngrok-free.dev/webhook/2ed73ed6-7a9b-4541-838a-c0f59a72d7db",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ destination })
-      }
-    );
+<div id="result"></div>
 
-    const raw = await res.json();
+<script src="script.js"></script>
 
-    console.log("RAW RESPONSE:", raw);
-
-    const data =
-      raw?.[0]?.json ||
-      raw?.json ||
-      raw;
-
-    const destinationOut =
-      data?.Destination ?? "N/A";
-
-    const risk =
-      data?.Risk_level ?? "N/A";
-
-    const score =
-      data?.Score ?? "N/A";
-
-    const advice =
-      data?.Travel_Advice ??
-      "No advice returned";
-
-    document.getElementById("result").innerHTML = `
-📍 ${destinationOut}
-
-🔴 Risk Level: ${risk}
-📊 Score: ${score}/10
-
-⚠️ ${advice}
-`;
-  } catch (error) {
-    console.error(error);
-
-    document.getElementById("result").innerText =
-      "❌ Error connecting to server";
-  }
-}
+</body>
+</html>
